@@ -18,7 +18,7 @@ I'm planning on adding these objects:
   - actions: `add_task(task)`
 - `Task`
   - attributes: `title`, `priority`, `duration_in_minutes`, `date`, `completed`
-  - actions: `mark_complete()`
+  - actions: `mark_task_complete()`
 - `Scheduler`
   - attributes: `owner`, `pets_involved`, `tasks (list[Task])`, `target_date`
   - actions: `add_task(task)`, `build_schedule()`
@@ -44,8 +44,9 @@ classDiagram
         +int priority
         +int duration_in_minutes
         +date date
+        +date time
         +bool completed
-        +mark_complete()
+        +mark_task_complete()
     }
 
     class Scheduler {
@@ -69,7 +70,7 @@ The `Scheduler` class primarily "orchestrates" the rest, though `Pet` and `Task`
 
 After asking Copilot, I changed `Scheduler` to be able to hold more than one `Pet`, allowing it to handle more than one at a time. I also added a `target_date` parameter so the `Scheduler` can know what to do with `Task` objects with differing date values.
 
-To support testing, `Task` gained a `completed` boolean (default `False`) and a `mark_complete()` method to flip it. `Pet` gained a `tasks` list and an `add_task()` method so individual pets can track their own tasks directly, rather than all tasks living only on the `Scheduler`.
+To support testing, `Task` gained a `completed` boolean (default `False`) and a `mark_task_complete()` method to flip it. `Pet` gained a `tasks` list and an `add_task()` method so individual pets can track their own tasks directly, rather than all tasks living only on the `Scheduler`.
 
 ---
 
@@ -77,13 +78,15 @@ To support testing, `Task` gained a `completed` boolean (default `False`) and a 
 
 **a. Constraints and priorities**
 
-- What constraints does your scheduler consider (for example: time, priority, preferences)?
-- How did you decide which constraints mattered most?
+The scheduler is designed to consider two main constraints: the owner's available time (in minutes) and each task's priority number. Lower priority numbers are more urgent, so a task with priority 1 should be scheduled before one with priority 3.
+
+Right now, `build_schedule()` is not yet implemented and just returns an empty list. So in practice, the app doesn't enforce the time budget or cut any tasks. Conflict detection does work, but it only warns the user rather than removing tasks automatically.
 
 **b. Tradeoffs**
 
-- Describe one tradeoff your scheduler makes.
-- Why is that tradeoff reasonable for this scenario?
+The `detect_conflicts` method checks every task against every other task. Copilot suggested sorting tasks by start time first and scanning through once, which would be faster for large lists.
+
+I kept the simpler version because the app will only ever have a small number of tasks per day, so the speed difference doesn't matter. The current approach is easier to read and understand, which is more valuable here than a small performance gain.
 
 ---
 

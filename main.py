@@ -13,6 +13,8 @@ scheduler.add_task(ps.Task("Morning Walk", priority=1,
                    duration_in_minutes=30, date=date.today(), time=time(8, 0), pet_name="Mocha"))
 scheduler.add_task(ps.Task("Vet Check-up", priority=3,
                    duration_in_minutes=60, date=date.today(), time=time(16, 0), pet_name="Mocha"))
+scheduler.add_task(ps.Task("Grooming Session", priority=2,
+                   duration_in_minutes=45, date=date.today(), time=time(8, 15), pet_name="Cookie"))
 
 print("=== Today's Schedule ===")
 for task in scheduler.tasks:
@@ -29,3 +31,11 @@ for task in scheduler.tasks:
 
 print("\n=== Incomplete Tasks for Cookie ===")
 print(scheduler.filter_tasks(completed=False, pet_name="Cookie"))
+
+print("\n=== Conflict Detection ===")
+warnings = scheduler.detect_conflicts()
+if warnings:
+    for warning in warnings:
+        print(warning)
+else:
+    print("No conflicts detected.")

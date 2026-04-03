@@ -43,6 +43,14 @@ class Task:
         # create identical new task but with updated date and reset completion state
         return replace(self, date=next_date, completed=False)
 
+def _tasks_overlap(task1: "Task", task2: "Task") -> bool:
+    """Return True if two tasks overlap in time on the same date."""
+    start1 = task1.time.hour * 60 + task1.time.minute
+    end1   = start1 + task1.duration_in_minutes
+    start2 = task2.time.hour * 60 + task2.time.minute
+    end2   = start2 + task2.duration_in_minutes
+    return start1 < end2 and start2 < end1
+
 @dataclass
 class Scheduler:
     owner: Owner
@@ -66,6 +74,19 @@ class Scheduler:
             and (pet_name is None or t.pet_name == pet_name)
         ]
 
+    def detect_conflicts(self) -> list[str]:
+        """Return a warning message for every pair of tasks that overlap in time."""
+        warnings = []
+        for i in range(len(self.tasks)):
+            for task2 in self.tasks[i + 1:]:
+                task1 = self.tasks[i]
+                if task1.date == task2.date and _tasks_overlap(task1, task2):
+                    warnings.append(
+                        f"Warning: '{task1.title}' ({task1.pet_name}) and "
+                        f"'{task2.title}' ({task2.pet_name}) overlap on {task1.date}."
+                    )
+        return warnings
+
     def sort_by_time(self) -> None:
-        """Sort the tasks by their duration."""
+        """Sort the tasks by their time."""
         self.tasks.sort(key=lambda task: (task.date, task.time))
