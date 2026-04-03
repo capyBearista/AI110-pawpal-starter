@@ -1,5 +1,5 @@
-from dataclasses import dataclass, field
-from datetime import date, time
+from dataclasses import dataclass, field, replace
+from datetime import date, time, timedelta
 
 @dataclass
 class Owner:
@@ -21,16 +21,27 @@ class Pet:
 @dataclass
 class Task:
     title: str
-    priority: int          # lower number = higher priority (e.g. 1 is most urgent)
+    priority: int  # lower number = higher priority (e.g. 1 is most urgent)
     duration_in_minutes: int
     date: date
     time: time
+    recurrence: str | None = None  # e.g. "daily", "weekly" or None for one-time
     pet_name: str = ""
     completed: bool = False
 
-    def mark_task_complete(self) -> None:
+    def mark_task_complete(self) -> "Task | None":
         """Mark this task as completed."""
         self.completed = True
+
+        if self.recurrence == "daily":
+            next_date = self.date + timedelta(days=1)
+        elif self.recurrence == "weekly":
+            next_date = self.date + timedelta(days=7)
+        else:
+            return None  # no recurrence, so task won't reappear later
+        
+        # create identical new task but with updated date and reset completion state
+        return replace(self, date=next_date, completed=False)
 
 @dataclass
 class Scheduler:
