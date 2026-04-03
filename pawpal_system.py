@@ -3,11 +3,13 @@ from datetime import date, time, timedelta
 
 @dataclass
 class Owner:
+    """Represents a pet owner with a name and daily time budget in minutes."""
     name: str
     available_minutes: int
 
 @dataclass
 class Pet:
+    """Represents a pet with basic info and a list of associated care tasks."""
     name: str
     age: int
     weight: float
@@ -20,6 +22,7 @@ class Pet:
 
 @dataclass
 class Task:
+    """Represents a single pet care task with timing, priority, and optional recurrence."""
     title: str
     priority: int  # lower number = higher priority (e.g. 1 is most urgent)
     duration_in_minutes: int
@@ -53,6 +56,7 @@ def _tasks_overlap(task1: "Task", task2: "Task") -> bool:
 
 @dataclass
 class Scheduler:
+    """Manages tasks for an owner's pets and provides scheduling, filtering, and conflict detection."""
     owner: Owner
     pets_involved: list[Pet]
     tasks: list[Task] = field(default_factory=list)

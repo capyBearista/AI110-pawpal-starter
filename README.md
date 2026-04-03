@@ -32,6 +32,15 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+## Smarter Scheduling
+
+The `Scheduler` class includes logic to make daily pet care planning more reliable:
+
+- **Conflict detection** (`detect_conflicts`): Flags any two tasks that are scheduled at overlapping times on the same day, so you can catch accidental double-bookings before they happen.
+- **Chronological sorting** (`sort_by_time`): Reorders all tasks by date and start time, giving you a clean, time-ordered view of the day.
+- **Filtered views** (`filter_tasks`): Lets you slice the task list by completion status or pet name.
+- **Prioritized schedule building** (`build_schedule`): Selects and orders tasks to fit within the owner's available time budget.
+
 ### Suggested workflow
 
 1. Read the scenario carefully and identify requirements and edge cases.
