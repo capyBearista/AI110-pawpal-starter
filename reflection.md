@@ -7,6 +7,59 @@
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
 
+Three core user actions a user should be able to perform:
+1. Add pet(s) along with pet info
+2. See today's tasks
+3. Add/edit tasks
+
+I'm planning on adding these objects:
+- `Owner`
+  - attributes: `name`, `available_minutes`
+  - methods: N/A
+- Pet`
+  - attributes: `name`, `age`, `weight`, `breed`
+  - actions: N/A
+- `Task`
+  - attributes: `title`, `priority`, `duration_in_minutes`, `date`
+  - actions: N/A
+- `Scheduler`
+  - attributes: `owner`, `pet_involved`, `tasks (list[Task])`
+  - actions: `add_task(task)`, `build_schedule()`
+
+```mermaid
+classDiagram
+    class Owner {
+        +String name
+        +int available_minutes
+    }
+
+    class Pet {
+        +String name
+        +int age
+        +float weight
+        +String breed
+    }
+
+    class Task {
+        +String title
+        +int priority
+        +int duration_in_minutes
+        +date date
+    }
+
+    class Scheduler {
+        +Owner owner
+        +Pet pet_involved
+        +list~Task~ tasks
+        +add_task(task)
+        +build_schedule()
+    }
+
+    Scheduler "1" --> "1" Owner : has
+    Scheduler "1" --> "1" Pet : involves
+    Scheduler "1" --> "*" Task : manages
+```
+
 **b. Design changes**
 
 - Did your design change during implementation?
