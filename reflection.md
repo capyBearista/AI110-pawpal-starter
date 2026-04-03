@@ -14,7 +14,7 @@ I'm planning on adding these objects:
   - attributes: `name`, `available_minutes`
   - methods: N/A
 - `Pet`
-  - attributes: `name`, `age`, `weight`, `breed`, `tasks (list[Task])`
+  - attributes: `name`, `age`, `weight`, `species`, `tasks (list[Task])`
   - actions: `add_task(task)`
 - `Task`
   - attributes: `title`, `priority`, `duration_in_minutes`, `date`, `completed`
@@ -34,7 +34,7 @@ classDiagram
         +String name
         +int age
         +float weight
-        +String breed
+        +String species
         +list~Task~ tasks
         +add_task(task)
     }

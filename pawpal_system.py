@@ -13,7 +13,7 @@ class Pet:
     name: str
     age: int
     weight: float
-    breed: str
+    species: str
     tasks: list = field(default_factory=list)
 
     def add_task(self, task: "Task") -> None:
