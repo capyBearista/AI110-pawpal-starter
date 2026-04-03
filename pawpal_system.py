@@ -14,6 +14,11 @@ class Pet:
     age: int
     weight: float
     breed: str
+    tasks: list = field(default_factory=list)
+
+    def add_task(self, task: "Task") -> None:
+        """Append a task to this pet's task list."""
+        self.tasks.append(task)
 
 
 @dataclass
@@ -22,6 +27,11 @@ class Task:
     priority: int          # lower number = higher priority (e.g. 1 is most urgent)
     duration_in_minutes: int
     date: date
+    completed: bool = False
+
+    def mark_complete(self) -> None:
+        """Mark this task as completed."""
+        self.completed = True
 
 
 @dataclass

@@ -13,12 +13,12 @@ I'm planning on adding these objects:
 - `Owner`
   - attributes: `name`, `available_minutes`
   - methods: N/A
-- Pet`
-  - attributes: `name`, `age`, `weight`, `breed`
-  - actions: N/A
+- `Pet`
+  - attributes: `name`, `age`, `weight`, `breed`, `tasks (list[Task])`
+  - actions: `add_task(task)`
 - `Task`
-  - attributes: `title`, `priority`, `duration_in_minutes`, `date`
-  - actions: N/A
+  - attributes: `title`, `priority`, `duration_in_minutes`, `date`, `completed`
+  - actions: `mark_complete()`
 - `Scheduler`
   - attributes: `owner`, `pets_involved`, `tasks (list[Task])`, `target_date`
   - actions: `add_task(task)`, `build_schedule()`
@@ -35,6 +35,8 @@ classDiagram
         +int age
         +float weight
         +String breed
+        +list~Task~ tasks
+        +add_task(task)
     }
 
     class Task {
@@ -42,6 +44,8 @@ classDiagram
         +int priority
         +int duration_in_minutes
         +date date
+        +bool completed
+        +mark_complete()
     }
 
     class Scheduler {
@@ -54,15 +58,18 @@ classDiagram
     }
 
     Scheduler "1" --> "1" Owner : has
-    Scheduler "1" --> "1" Pet : involves
+    Scheduler "1" --> "*" Pet : involves
     Scheduler "1" --> "*" Task : manages
+    Pet "1" --> "*" Task : owns
 ```
 
-The `Scheduler` class, being the only one with actions/methods, essentially "orchestrates" the rest.
+The `Scheduler` class primarily "orchestrates" the rest, though `Pet` and `Task` also carry behavior of their own.
 
 **b. Design changes**
 
 After asking Copilot, I changed `Scheduler` to be able to hold more than one `Pet`, allowing it to handle more than one at a time. I also added a `target_date` parameter so the `Scheduler` can know what to do with `Task` objects with differing date values.
+
+To support testing, `Task` gained a `completed` boolean (default `False`) and a `mark_complete()` method to flip it. `Pet` gained a `tasks` list and an `add_task()` method so individual pets can track their own tasks directly, rather than all tasks living only on the `Scheduler`.
 
 ---
 
