@@ -4,9 +4,6 @@
 
 **a. Initial design**
 
-- Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
-
 Three core user actions a user should be able to perform:
 1. Add pet(s) along with pet info
 2. See today's tasks
@@ -23,7 +20,7 @@ I'm planning on adding these objects:
   - attributes: `title`, `priority`, `duration_in_minutes`, `date`
   - actions: N/A
 - `Scheduler`
-  - attributes: `owner`, `pet_involved`, `tasks (list[Task])`
+  - attributes: `owner`, `pets_involved`, `tasks (list[Task])`, `target_date`
   - actions: `add_task(task)`, `build_schedule()`
 
 ```mermaid
@@ -49,8 +46,9 @@ classDiagram
 
     class Scheduler {
         +Owner owner
-        +Pet pet_involved
+        +list[Pet] pets_involved
         +list~Task~ tasks
+        +date~ target_date
         +add_task(task)
         +build_schedule()
     }
@@ -60,10 +58,11 @@ classDiagram
     Scheduler "1" --> "*" Task : manages
 ```
 
+The `Scheduler` class, being the only one with actions/methods, essentially "orchestrates" the rest.
+
 **b. Design changes**
 
-- Did your design change during implementation?
-- If yes, describe at least one change and why you made it.
+After asking Copilot, I changed `Scheduler` to be able to hold more than one `Pet`, allowing it to handle more than one at a time. I also added a `target_date` parameter so the `Scheduler` can know what to do with `Task` objects with differing date values.
 
 ---
 

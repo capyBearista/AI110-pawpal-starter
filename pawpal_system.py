@@ -27,8 +27,9 @@ class Task:
 @dataclass
 class Scheduler:
     owner: Owner
-    pet_involved: Pet
+    pets_involved: list[Pet]
     tasks: list[Task] = field(default_factory=list)
+    target_date: date = field(default_factory=date.today)
 
     def add_task(self, task: Task) -> None:
         """Add a task to the task list."""
