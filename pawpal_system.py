@@ -1,12 +1,10 @@
 from dataclasses import dataclass, field
-from datetime import date
-
+from datetime import date, time
 
 @dataclass
 class Owner:
     name: str
     available_minutes: int
-
 
 @dataclass
 class Pet:
@@ -20,19 +18,19 @@ class Pet:
         """Append a task to this pet's task list."""
         self.tasks.append(task)
 
-
 @dataclass
 class Task:
     title: str
     priority: int          # lower number = higher priority (e.g. 1 is most urgent)
     duration_in_minutes: int
     date: date
+    time: time
+    pet_name: str = ""
     completed: bool = False
 
-    def mark_complete(self) -> None:
+    def mark_task_complete(self) -> None:
         """Mark this task as completed."""
         self.completed = True
-
 
 @dataclass
 class Scheduler:
@@ -48,3 +46,15 @@ class Scheduler:
     def build_schedule(self) -> list[Task]:
         """Return a prioritized list of tasks that fits within the owner's available time."""
         return []
+    
+    def filter_tasks(self, completed: bool | None = None, pet_name: str | None = None) -> list[Task]:
+        """Return tasks matching the given completion status and/or pet name. None means no filter."""
+        return [
+            t for t in self.tasks
+            if (completed is None or t.completed == completed)
+            and (pet_name is None or t.pet_name == pet_name)
+        ]
+
+    def sort_by_time(self) -> None:
+        """Sort the tasks by their duration."""
+        self.tasks.sort(key=lambda task: (task.date, task.time))
