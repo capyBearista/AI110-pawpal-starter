@@ -41,12 +41,21 @@ The `Scheduler` class includes logic to make daily pet care planning more reliab
 - **Filtered views** (`filter_tasks`): Lets you slice the task list by completion status or pet name.
 - **Prioritized schedule building** (`build_schedule`): Selects and orders tasks to fit within the owner's available time budget.
 
-### Suggested workflow
+## Testing PawPal+
 
-1. Read the scenario carefully and identify requirements and edge cases.
-2. Draft a UML diagram (classes, attributes, methods, relationships).
-3. Convert UML into Python class stubs (no logic yet).
-4. Implement scheduling logic in small increments.
-5. Add tests to verify key behaviors.
-6. Connect your logic to the Streamlit UI in `app.py`.
-7. Refine UML so it matches what you actually built.
+Run the full test suite from the `pawpal-starter` directory:
+
+```bash
+python -m pytest
+```
+
+The test suite covers the following behaviors:
+
+| Group | What is tested |
+|---|---|
+| **Sorting** | Tasks in mixed order come out chronologically; date takes priority over time of day |
+| **Recurrence** | Completing a daily task creates a new task dated `+1 day`; weekly creates `+7 days`; one-time tasks return `None` |
+| **Conflict detection** | Double-booked and overlapping slots are flagged; back-to-back tasks and same-time tasks on different dates are not flagged |
+
+> **Confidence Level: 3/5 ⭐**
+> *The core behaviors — sorting, recurrence, and conflict detection — are well-tested and reliable, but I am capping confidence at 3 stars because `build_schedule` (the prioritized daily plan builder) isn't yet implemented. We can't be totally sure that the system functions perfectly, without it.*
