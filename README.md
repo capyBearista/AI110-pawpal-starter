@@ -1,35 +1,28 @@
 # PawPal+ (Module 2 Project)
 
-You are building **PawPal+**, a Streamlit app that helps a pet owner plan care tasks for their pet.
+This is **PawPal+**, a Streamlit app that helps a pet owner plan care tasks for their pet.
 
-## Scenario
+## Features
 
-A busy pet owner needs help staying consistent with pet care. They want an assistant that can:
+- **Task management** — add care tasks for your pet with a title, start time, duration, and priority level
+- **Time-ordered schedule** — tasks are automatically sorted chronologically so you always see the day in order
+- **Conflict detection** — overlapping tasks are flagged with a warning before your day starts
+- **Filtered views** — filter the task list by pet or completion status
+- **Recurrence support** — mark a task complete and a new one is automatically created for the next occurrence (daily or weekly)
 
-- Track pet care tasks (walks, feeding, meds, enrichment, grooming, etc.)
-- Consider constraints (time available, priority, owner preferences)
-- Produce a daily plan and explain why it chose that plan
+## Demo
 
-Your job is to design the system first (UML), then implement the logic in Python, then connect it to the Streamlit UI.
-
-## What you will build
-
-Your final app should:
-
-- Let a user enter basic owner + pet info
-- Let a user add/edit tasks (duration + priority at minimum)
-- Generate a daily schedule/plan based on constraints and priorities
-- Display the plan clearly (and ideally explain the reasoning)
-- Include tests for the most important scheduling behaviors
+<a href="screenshot.png" target="_blank"><img src='screenshot.png' title='PawPal App' width='' alt='PawPal App' class='center-block' /></a>
 
 ## Getting started
 
-### Setup
+### Running The App
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+streamlit run app.py
 ```
 
 ## Smarter Scheduling

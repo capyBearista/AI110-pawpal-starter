@@ -1,5 +1,6 @@
 import streamlit as st  # type: ignore[import-not-found]
 import pawpal_system as ps
+from datetime import date, time as time_type
 
 st.set_page_config(page_title="PawPal+", page_icon="🐾", layout="centered")
 
@@ -64,24 +65,42 @@ with col2:
 with col3:
     priority = st.selectbox("Priority", ["low", "medium", "high"], index=2)
 
+task_time = st.time_input("Start time", value=time_type(8, 0))
+
 PRIORITY_MAP = {"high": 1, "medium": 2, "low": 3}
+PRIORITY_LABEL = {1: "high", 2: "medium", 3: "low"}
 
 if st.button("Add task"):
-    from datetime import date
     new_task = ps.Task(
         title=task_title,
         priority=PRIORITY_MAP[priority],
         duration_in_minutes=int(duration),
         date=date.today(),
+        time=task_time,
     )
     st.session_state.scheduler.add_task(new_task)
 
 if st.session_state.scheduler.tasks:
-    st.write("Current tasks:")
+    st.session_state.scheduler.sort_by_time()
+    conflicts = st.session_state.scheduler.detect_conflicts()
+
+    st.write("Current tasks (sorted by time):")
     st.table([
-        {"title": t.title, "priority": t.priority, "duration_in_minutes": t.duration_in_minutes}
+        {
+            "Task": t.title,
+            "Time": t.time.strftime("%H:%M"),
+            "Duration (min)": t.duration_in_minutes,
+            "Priority": PRIORITY_LABEL.get(t.priority, str(t.priority)),
+        }
         for t in st.session_state.scheduler.tasks
     ])
+
+    if conflicts:
+        st.markdown("#### Schedule Conflicts")
+        for msg in conflicts:
+            st.warning(msg)
+    else:
+        st.success("No scheduling conflicts detected.")
 else:
     st.info("No tasks yet. Add one above.")
 

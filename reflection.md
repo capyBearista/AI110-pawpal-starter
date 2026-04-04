@@ -44,18 +44,23 @@ classDiagram
         +int priority
         +int duration_in_minutes
         +date date
-        +date time
+        +time time
+        +String recurrence
+        +String pet_name
         +bool completed
         +mark_task_complete()
     }
 
     class Scheduler {
         +Owner owner
-        +list[Pet] pets_involved
+        +list~Pet~ pets_involved
         +list~Task~ tasks
-        +date~ target_date
+        +date target_date
         +add_task(task)
         +build_schedule()
+        +filter_tasks(completed, pet_name)
+        +detect_conflicts()
+        +sort_by_time()
     }
 
     Scheduler "1" --> "1" Owner : has
@@ -94,13 +99,17 @@ I kept the simpler version because the app will only ever have a small number of
 
 **a. How you used AI**
 
-- How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
-- What kinds of prompts or questions were most helpful?
+I used AI tools in three main ways: design brainstorming, code generation, and explaining concepts.
+
+For brainstorming, I asked questions like "what classes should a pet scheduling app have?" and "what methods does a Scheduler need?" Those early structural questions were the most valuable — they helped me sketch out the four-class design before writing any code.
+
+For code generation, I used AI to scaffold methods like `mark_task_complete()` and the `filter_tasks()` logic, then reviewed and adjusted them to fit what I actually needed.
+
+For concept explanations, I asked things like "what is a dataclass in Python?" and "how does `replace()` work?" — especially useful when I ran into unfamiliar Python features.
 
 **b. Judgment and verification**
 
-- Describe one moment where you did not accept an AI suggestion as-is.
-- How did you evaluate or verify what the AI suggested?
+When Copilot suggested rewriting `detect_conflicts` to sort tasks by start time first and only check each task against the next one, I didn't accept it right away. I wanted to understand why before changing the code. When I thought it through, I realized the simpler nested loop was easier to read and there was no real performance concern—this app will never have more than a handful of tasks in a day. So I kept the simpler version. I evaluated it by tracing through the logic manually and confirming the test cases still passed.
 
 ---
 
@@ -108,13 +117,21 @@ I kept the simpler version because the app will only ever have a small number of
 
 **a. What you tested**
 
-- What behaviors did you test?
-- Why were these tests important?
+I tested three core behaviors: chronological sorting, recurring task generation, and conflict detection.
+
+Sorting tests made sure that tasks added in mixed order come out correctly sorted by date first, then by time of day within the same date.
+
+Recurrence tests verified that calling `mark_task_complete()` on a daily task creates a new task dated one day later, and a weekly task creates one dated seven days later. One-time tasks return `None` as expected.
+
+Conflict detection tests confirmed that two tasks with overlapping time windows get flagged, while back-to-back tasks (no overlap) and same-time tasks on different dates are not flagged. These were important to test because the edge cases—especially back-to-back—are easy to get wrong with off-by-one mistakes in the interval comparison.
 
 **b. Confidence**
 
-- How confident are you that your scheduler works correctly?
-- What edge cases would you test next if you had more time?
+I'd say about 3/5. The three behaviors I tested work reliably and I covered the edge cases I could think of.
+
+What holds me back from higher confidence is that `build_schedule()` isn't implemented yet. Until the prioritization and time-budget logic actually runs, the scheduler isn't doing its main job. That's a significant untested surface area.
+
+If I had more time, I'd want to test what happens when no tasks fit within the owner's available minutes, and what the behavior is when two tasks start at exactly the same time on the same day.
 
 ---
 
@@ -122,12 +139,12 @@ I kept the simpler version because the app will only ever have a small number of
 
 **a. What went well**
 
-- What part of this project are you most satisfied with?
+The conflict detection. Getting the overlap logic right took some thought; two time windows overlap only when neither one ends before the other begins. Once I understood that, the `_tasks_overlap` helper made the logic clean and easy to read. It also felt like the most "real" piece of the project: something that could actually prevent a mistake a pet owner would make in real life.
 
 **b. What you would improve**
 
-- If you had another iteration, what would you improve or redesign?
+`build_schedule()` is the obvious gap. Right now it returns an empty list, which means the prioritization and time-budget system doesn't actually run. I'd implement it as a greedy algorithm that sorts tasks by priority number then adds them one at a time until the owner's available minutes run out.
 
 **c. Key takeaway**
 
-- What is one important thing you learned about designing systems or working with AI on this project?
+AI is very good at generating structure, from class names to method signatures to data models. However, it can't tell you what tradeoffs actually matter for your specific situation. When Copilot suggested the faster conflict detection algorithm, it wasn't exactly wrong, but it also didn't know that this app would never have more than a dozen tasks a day. That judgment had to come from me. AI helps you build faster but has a hard time understanding your real intent.
